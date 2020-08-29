@@ -1,0 +1,23 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    tty: true
+    volumes:
+      - ./backend/src:/go_todo/
+    expose:
+      - "8080"
+    ports: 
+      - "8080:8080"
+  
+  frontend:
+    build: ./frontend
+    tty: true
+    volumes:
+      - ./frontend/app:/app
+      - /app/node_modules
+    command: yarn start
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"

@@ -1,0 +1,27 @@
+version: '3'
+services:
+  backend:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./backend
+    command: fresh
+    expose:
+      - "8080"
+    ports: 
+      - "8080:8080"
+    volumes:
+      - ./backend/src:/src
+
+  frontend:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./frontend
+    tty: true
+    volumes:
+      - ./frontend/app:/app
+      - /app/node_modules
+    command: "yarn dev"
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"

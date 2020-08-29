@@ -1,0 +1,9 @@
+FROM golang:1.14-alpine
+
+WORKDIR /src
+COPY ./src .
+ENV GO111MODULE=on
+RUN apk update && apk add sqlite
+
+RUN go get github.com/pilu/fresh
+CMD ["fresh"]
