@@ -3,9 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tunamagur0/go-todo/todo"
 	"log"
 	"net/http"
+
+	"github.com/tunamagur0/go-todo/todo"
 )
 
 func health(w http.ResponseWriter, r *http.Request) {
@@ -19,6 +20,12 @@ func create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	if todo.Content == "" {
+		http.Error(w, "content is empty", http.StatusBadRequest)
+		return
+	}
+
 	log.Println(todo.Content)
 }
 
