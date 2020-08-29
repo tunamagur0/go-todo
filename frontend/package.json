@@ -1,8 +1,0 @@
-{
-  "name": "todo",
-  "version": "1.0.0",
-  "description": "golang todo app",
-  "main": "index.js",
-  "author": "tunamagur0",
-  "license": "MIT"
-}
