@@ -52,11 +52,6 @@ func (s *Server) HandleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) HandleTodos(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Only get is allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var todos []models.Todo
 	if err := s.db.Find(&todos).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -78,11 +73,6 @@ func (s *Server) HandleTodos(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) HandleTodo(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Only get is allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
 	if !ok {
@@ -113,11 +103,6 @@ func (s *Server) HandleTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) HandleCreate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Only post is allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var todo models.Todo
 	if err := json.NewDecoder(r.Body).Decode(&todo); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -158,7 +143,7 @@ func (s *Server) initHandlers() {
 	s.server.Handler = r
 
 	r.HandleFunc("/health", s.HandleHealth)
-	r.HandleFunc("/todos", s.HandleTodos)
-	r.HandleFunc("/create", s.HandleCreate)
-	r.HandleFunc("/todo/{id}", s.HandleTodo)
+	r.HandleFunc("/todos", s.HandleTodos).Methods("GET")
+	r.HandleFunc("/create", s.HandleCreate).Methods("POST")
+	r.HandleFunc("/todo/{id}", s.HandleTodo).Methods("GET")
 }
