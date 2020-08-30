@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"unicode/utf8"
+
+	"github.com/google/uuid"
 
 	"github.com/tunamagur0/go-todo/models"
 	"gorm.io/gorm"
@@ -47,6 +50,11 @@ func (s *Server) HandleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) HandleCreate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only post is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	var todo models.Todo
 	if err := json.NewDecoder(r.Body).Decode(&todo); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -57,7 +65,29 @@ func (s *Server) HandleCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "content is empty", http.StatusBadRequest)
 		return
 	}
-	s.db.Create(&todo)
+
+	if utf8.RuneCountInString(todo.Content) > 255 {
+		http.Error(w, "content is too long", http.StatusBadRequest)
+		return
+	}
+
+	id, err := uuid.NewRandom()
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	todo.ID = id.String()
+	s.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&todo).Error; err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return err
+		}
+		return nil
+	})
+
+	w.WriteHeader(http.StatusCreated)
+	return
 }
 
 func (s *Server) initHandlers() {
