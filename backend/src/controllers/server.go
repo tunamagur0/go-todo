@@ -3,12 +3,14 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"unicode/utf8"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 
 	"github.com/tunamagur0/go-todo/models"
 	"gorm.io/gorm"
@@ -75,6 +77,41 @@ func (s *Server) HandleTodos(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
+func (s *Server) HandleTodo(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only get is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+
+	var todo models.Todo
+	query := s.db.Where("id = ?", id).First(&todo)
+	if err := query.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			http.Error(w, "Not found", http.StatusNotFound)
+			return
+		}
+
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res, err := json.Marshal(todo)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(res)
+}
+
 func (s *Server) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Only post is allowed", http.StatusMethodNotAllowed)
@@ -117,10 +154,11 @@ func (s *Server) HandleCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) initHandlers() {
-	mux := http.NewServeMux()
-	s.server.Handler = mux
+	r := mux.NewRouter()
+	s.server.Handler = r
 
-	mux.HandleFunc("/health", s.HandleHealth)
-	mux.HandleFunc("/todos", s.HandleTodos)
-	mux.HandleFunc("/create", s.HandleCreate)
+	r.HandleFunc("/health", s.HandleHealth)
+	r.HandleFunc("/todos", s.HandleTodos)
+	r.HandleFunc("/create", s.HandleCreate)
+	r.HandleFunc("/todo/{id}", s.HandleTodo)
 }
