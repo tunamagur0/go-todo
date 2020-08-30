@@ -5,11 +5,11 @@ import "time"
 type TodoStatus int
 
 const (
-	StatusUnknown TodoStatus = iota
-	StatusNew
+	StatusNew TodoStatus = iota
 	StatusWIP
 	StatusDone
 	StatusPending
+	StatusUnknown
 )
 
 func (ts TodoStatus) String() string {
@@ -28,16 +28,16 @@ func (ts TodoStatus) String() string {
 }
 
 func NewTodoStatus(status int) TodoStatus {
-	if status == 1 {
+	if status == 0 {
 		return StatusNew
 	}
-	if status == 2 {
+	if status == 1 {
 		return StatusWIP
 	}
-	if status == 3 {
+	if status == 2 {
 		return StatusDone
 	}
-	if status == 4 {
+	if status == 3 {
 		return StatusWIP
 	}
 	return StatusUnknown

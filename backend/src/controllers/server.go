@@ -122,6 +122,54 @@ func (s *Server) HandleStatus(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func (s *Server) HandleContent(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+
+	var body struct {
+		Content string `json:"content"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if body.Content == "" {
+		http.Error(w, "content is empty", http.StatusBadRequest)
+		return
+	}
+
+	if utf8.RuneCountInString(body.Content) > 255 {
+		http.Error(w, "content is too long", http.StatusBadRequest)
+		return
+	}
+
+	var todo models.Todo
+	s.db.Transaction(func(tx *gorm.DB) error {
+		query := s.db.Where("id = ?", id).First(&todo)
+		if err := query.Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				http.Error(w, "Not found", http.StatusNotFound)
+				return err
+			}
+		}
+
+		todo.Content = body.Content
+		if err := tx.Save(&todo).Error; err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return err
+		}
+
+		return nil
+	})
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (s *Server) HandleTodo(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
@@ -176,6 +224,7 @@ func (s *Server) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	todo.ID = id.String()
+	todo.Status = models.StatusNew
 	s.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&todo).Error; err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -195,5 +244,6 @@ func (s *Server) initHandlers() {
 	r.HandleFunc("/todos", s.HandleTodos).Methods("GET")
 	r.HandleFunc("/create", s.HandleCreate).Methods("POST")
 	r.HandleFunc("/todo/{id}", s.HandleTodo).Methods("GET")
+	r.HandleFunc("/todo/{id}/content", s.HandleContent).Methods("POST")
 	r.HandleFunc("/todo/{id}/status", s.HandleStatus).Methods("POST")
 }
