@@ -49,6 +49,32 @@ func (s *Server) HandleHealth(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "{health:ok}")
 }
 
+func (s *Server) HandleTodos(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only get is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var todos []models.Todo
+	if err := s.db.Find(&todos).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if todos == nil {
+		todos = []models.Todo{}
+	}
+
+	res, err := json.Marshal(todos)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(res)
+}
+
 func (s *Server) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Only post is allowed", http.StatusMethodNotAllowed)
@@ -95,5 +121,6 @@ func (s *Server) initHandlers() {
 	s.server.Handler = mux
 
 	mux.HandleFunc("/health", s.HandleHealth)
+	mux.HandleFunc("/todos", s.HandleTodos)
 	mux.HandleFunc("/create", s.HandleCreate)
 }
