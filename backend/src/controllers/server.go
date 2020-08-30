@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 	"unicode/utf8"
 
 	"github.com/google/uuid"
@@ -72,6 +73,55 @@ func (s *Server) HandleTodos(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
+func (s *Server) HandleStatus(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, okId := vars["id"]
+	if !okId {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+
+	var body struct {
+		Status int `json:"status"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	status := models.NewTodoStatus(body.Status)
+	if status == models.StatusUnknown {
+		http.Error(w, "unknown todo status", http.StatusBadRequest)
+		return
+	}
+
+	var todo models.Todo
+	s.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("id = ?", id).First(&todo).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				http.Error(w, "Not found", http.StatusNotFound)
+				return err
+			}
+
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return err
+		}
+
+		todo.Status = status
+		if status == models.StatusDone {
+			now := time.Now()
+			todo.FinishedAt = &now
+		}
+		if err := tx.Save(&todo).Error; err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return err
+		}
+		return nil
+	})
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (s *Server) HandleTodo(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
@@ -135,7 +185,6 @@ func (s *Server) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.WriteHeader(http.StatusCreated)
-	return
 }
 
 func (s *Server) initHandlers() {
@@ -146,4 +195,5 @@ func (s *Server) initHandlers() {
 	r.HandleFunc("/todos", s.HandleTodos).Methods("GET")
 	r.HandleFunc("/create", s.HandleCreate).Methods("POST")
 	r.HandleFunc("/todo/{id}", s.HandleTodo).Methods("GET")
+	r.HandleFunc("/todo/{id}/status", s.HandleStatus).Methods("POST")
 }
