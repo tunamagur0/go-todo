@@ -8,7 +8,7 @@ RUN go build -o main ./src
 
 FROM alpine:latest
 
-RUN apk update && apk add sqlite
+RUN apk update && apk add --update qlite libc-dev musl-dev gcc
 
 WORKDIR /app/
 COPY --from=builder /go_todo/main /app/
