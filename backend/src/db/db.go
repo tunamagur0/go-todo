@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func Init() *gorm.DB {
-	var db, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+func Init(dbPath string) *gorm.DB {
+	var db, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
 		log.Fatalln(err)
 	}
