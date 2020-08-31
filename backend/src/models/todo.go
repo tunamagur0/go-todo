@@ -38,7 +38,7 @@ func NewTodoStatus(status int) TodoStatus {
 		return StatusDone
 	}
 	if status == 3 {
-		return StatusWIP
+		return StatusPending
 	}
 	return StatusUnknown
 }

@@ -1,25 +1,7 @@
 <template>
   <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">app</h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-          >Documentation</a
-        >
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-          >GitHub</a
-        >
-        <todo v-for="todo in todos" :key="todo.id" :todo="todo" />
-      </div>
+    <div class="flex flex-col space-y-8">
+      <todo v-for="todo in todos" :key="todo.id" :todo="todo" />
     </div>
   </div>
 </template>
@@ -27,8 +9,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import '@nuxtjs/axios';
-import Todo from '~/components/Todo.vue';
-import { camelize } from '~/libs/camelize';
+import Todo from '@/components/Todo.vue';
+import { camelize } from '@/libs/camelize';
+import { convertDate } from '@/libs/convertDate';
+import * as Task from '@/types/task';
 
 export default Vue.extend({
   components: {
@@ -37,8 +21,8 @@ export default Vue.extend({
   async asyncData({ $axios }) {
     const res = await $axios
       .$get('/api/todos')
-      .then((r) => {
-        return r.map((e) => camelize(e));
+      .then((r: Task.Todo[]) => {
+        return r.map((e: Task.Todo) => convertDate(camelize(e)));
       })
       .catch((err) => {
         console.log(err.request.response);

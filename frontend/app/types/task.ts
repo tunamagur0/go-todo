@@ -1,4 +1,10 @@
-export type TodoStatus = 0 | 1 | 2 | 3;
+export const enum TodoStatus {
+  statusNew,
+  statusWIP,
+  statusDone,
+  statusPending,
+  statusUnknown,
+}
 
 export interface Todo {
   id: string;
