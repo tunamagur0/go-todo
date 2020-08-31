@@ -200,6 +200,35 @@ func (s *Server) HandleTodo(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
+func (s *Server) HandleDelete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+
+	var todo models.Todo
+	s.db.Transaction(func(tx *gorm.DB) error {
+		query := s.db.Where("id = ?", id).First(&todo)
+		if err := query.Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				http.Error(w, "Not found", http.StatusNotFound)
+				return err
+			}
+		}
+
+		if err := tx.Delete(&todo).Error; err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return err
+		}
+
+		return nil
+	})
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (s *Server) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	var todo models.Todo
 	if err := json.NewDecoder(r.Body).Decode(&todo); err != nil {
@@ -244,6 +273,7 @@ func (s *Server) initHandlers() {
 	r.HandleFunc("/todos", s.HandleTodos).Methods("GET")
 	r.HandleFunc("/create", s.HandleCreate).Methods("POST")
 	r.HandleFunc("/todo/{id}", s.HandleTodo).Methods("GET")
+	r.HandleFunc("/todo/{id}", s.HandleDelete).Methods("DELETE")
 	r.HandleFunc("/todo/{id}/content", s.HandleContent).Methods("POST")
 	r.HandleFunc("/todo/{id}/status", s.HandleStatus).Methods("POST")
 }
