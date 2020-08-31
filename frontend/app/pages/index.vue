@@ -9,26 +9,35 @@
           target="_blank"
           rel="noopener noreferrer"
           class="button--green"
+          >Documentation</a
         >
-          Documentation
-        </a>
         <a
           href="https://github.com/nuxt/nuxt.js"
           target="_blank"
           rel="noopener noreferrer"
           class="button--grey"
+          >GitHub</a
         >
-          GitHub
-        </a>
+        <h2>{{ health }}</h2>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
+import '@nuxtjs/axios';
 
-export default Vue.extend({})
+export default Vue.extend({
+  async asyncData({ $axios }) {
+    const res = await $axios.$get('/api/health').catch((err) => {
+      console.log(err.request.response);
+      return { health: 'ng' };
+    });
+
+    return res;
+  },
+});
 </script>
 
 <style>

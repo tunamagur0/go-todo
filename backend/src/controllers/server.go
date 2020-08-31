@@ -49,7 +49,8 @@ func (s *Server) Stop(ctx context.Context) error {
 
 func (s *Server) HandleHealth(w http.ResponseWriter, r *http.Request) {
 	log.Println("health accessed")
-	fmt.Fprintf(w, "{health:ok}")
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, "{\"health\":\"ok\"}")
 }
 
 func (s *Server) HandleTodos(w http.ResponseWriter, r *http.Request) {

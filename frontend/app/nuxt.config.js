@@ -51,7 +51,7 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: [],
+  modules: ['@nuxtjs/axios', '@nuxtjs/proxy'],
   /*
    ** Build configuration
    ** See https://nuxtjs.org/api/configuration-build/
@@ -59,5 +59,11 @@ export default {
   build: {},
   server: {
     host: '0.0.0.0',
+  },
+  axios: {
+    proxy: true,
+  },
+  proxy: {
+    '/api/': { target: 'http://backend:8080', pathRewrite: { '^/api/': '/' } },
   },
 };
