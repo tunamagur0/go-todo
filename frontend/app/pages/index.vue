@@ -18,7 +18,7 @@
           class="button--grey"
           >GitHub</a
         >
-        <h2>{{ health }}</h2>
+        <todo v-for="todo in todos" :key="todo.id" :todo="todo" />
       </div>
     </div>
   </div>
@@ -27,15 +27,25 @@
 <script lang="ts">
 import Vue from 'vue';
 import '@nuxtjs/axios';
+import Todo from '~/components/Todo.vue';
+import { camelize } from '~/libs/camelize';
 
 export default Vue.extend({
+  components: {
+    Todo,
+  },
   async asyncData({ $axios }) {
-    const res = await $axios.$get('/api/health').catch((err) => {
-      console.log(err.request.response);
-      return { health: 'ng' };
-    });
+    const res = await $axios
+      .$get('/api/todos')
+      .then((r) => {
+        return r.map((e) => camelize(e));
+      })
+      .catch((err) => {
+        console.log(err.request.response);
+        return [];
+      });
 
-    return res;
+    return { todos: res };
   },
 });
 </script>
