@@ -1,7 +1,9 @@
 <template>
-  <div class="container">
-    <div class="flex flex-col space-y-8">
-      <todo v-for="todo in todos" :key="todo.id" :todo="todo" />
+  <div class="w-screen min-h-screen flex bg-blue-200">
+    <div class="flex flex-row space-x-8 w-full m-3">
+      <todo-list :todos="newTodo" title="New" bg-color="bg-orange-200" />
+      <todo-list :todos="doneTodo" title="Done" bg-color="bg-green-200" />
+      <todo-list :todos="pendingTodo" title="Pending" bg-color="bg-red-200" />
     </div>
   </div>
 </template>
@@ -9,14 +11,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import '@nuxtjs/axios';
-import Todo from '@/components/Todo.vue';
+import TodoList from '@/components/TodoList.vue';
 import { camelize } from '@/libs/camelize';
 import { convertDate } from '@/libs/convertDate';
 import * as Task from '@/types/task';
 
 export default Vue.extend({
   components: {
-    Todo,
+    TodoList,
   },
   async asyncData({ $axios }) {
     const res = await $axios
@@ -30,6 +32,19 @@ export default Vue.extend({
       });
 
     return { todos: res };
+  },
+  computed: {
+    newTodo() {
+      return this.todos.filter((e) => e.status === Task.TodoStatus.statusNew);
+    },
+    doneTodo() {
+      return this.todos.filter((e) => e.status === Task.TodoStatus.statusDone);
+    },
+    pendingTodo() {
+      return this.todos.filter(
+        (e) => e.status === Task.TodoStatus.statusPending
+      );
+    },
   },
 });
 </script>

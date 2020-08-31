@@ -1,7 +1,9 @@
 <template>
-  <div class="max-w-sm rounded overflow-hidden shadow-lg">
+  <div
+    class="max-w-sm rounded overflow-hidden shadow-lg text-center bg-gray-100"
+  >
     <p class="px-2 py-2 text-xl">{{ todo.content }}</p>
-    <div class="flex flex-row">
+    <div class="flex flex-row text-center">
       <p class="px-2 py-2 text-sm">{{ createdString }}</p>
       <p v-if="done" class="px-2 py-2 text-sm">
         {{ finishedString }}
