@@ -1,6 +1,6 @@
 # Usage
 
-`http://localhost:3000`にフロントエンド，`http://localhost:4000`にバックエンドが起動する．
+`http://localhost:3000`にフロントエンド，`http://localhost:8080`にバックエンドが起動する．
 
 ## development build
 
