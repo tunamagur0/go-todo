@@ -2,14 +2,16 @@ package db
 
 import (
 	"log"
+	"os"
 
 	"github.com/tunamagur0/go-todo/models"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func Init(dbPath string) *gorm.DB {
-	var db, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+func Init() *gorm.DB {
+	databaseURL := os.Getenv("DATABASE_URL")
+	db, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
 	if err != nil {
 		log.Fatalln(err)
 	}

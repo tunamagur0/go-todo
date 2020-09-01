@@ -15,5 +15,5 @@ WORKDIR /app/
 COPY --from=builder /go_todo/src/main /app/
 RUN chmod +x main
 
-CMD ["./main"]
+CMD ./main $PORT
 

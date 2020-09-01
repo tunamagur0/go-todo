@@ -2,22 +2,22 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 
 	"github.com/tunamagur0/go-todo/controllers"
 	"github.com/tunamagur0/go-todo/db"
 )
 
-func run(addr string, dbPath string) int {
+func run(addr string) int {
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 
 	errCh := make(chan error)
-	db := db.Init(dbPath)
+	db := db.Init()
 	server := controllers.NewServer(addr, db)
 
 	go func() {
@@ -41,8 +41,6 @@ func run(addr string, dbPath string) int {
 }
 
 func main() {
-	flagAddr := flag.String("addr", ":8080", "host:port")
-	flagDBPath := flag.String("db", "todo.db", "db path")
-	flag.Parse()
-	os.Exit(run(*flagAddr, *flagDBPath))
+	port, _ := strconv.Atoi(os.Args[1])
+	os.Exit(run(fmt.Sprintf(":%d", port)))
 }

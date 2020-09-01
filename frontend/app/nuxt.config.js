@@ -65,6 +65,9 @@ export default {
     proxy: true,
   },
   proxy: {
-    '/api/': { target: 'http://backend:8080', pathRewrite: { '^/api/': '/' } },
+    '/api/': {
+      target: 'https://tunamagur0-go-todo-api.herokuapp.com',
+      pathRewrite: { '^/api/': '/' },
+    },
   },
 };
