@@ -25,6 +25,7 @@ export default Vue.extend({
   },
   methods: {
     onclick() {
+      if (this.content.length === 0) return;
       if (this.content.length > 255) {
         alert('content is too long!');
         return;

@@ -6,6 +6,9 @@ import '@nuxtjs/axios';
 
 export const state = () => ({
   todos: [] as Todo[],
+  selectedId: '',
+  isDelete: false,
+  isUpdate: false,
 });
 
 export type RootState = ReturnType<typeof state>;
@@ -19,6 +22,9 @@ export const getters: GetterTree<RootState, RootState> = {
     state.todos.filter((e) => e.status === TodoStatus.statusDone),
   pendingTodos: (state) =>
     state.todos.filter((e) => e.status === TodoStatus.statusPending),
+  isSelected: (state) => state.selectedId !== '',
+  isDelete: (state) => state.isDelete,
+  isUpdate: (state) => state.isDelete,
   todos: (state) => state.todos,
 };
 
@@ -39,6 +45,13 @@ export const mutations: MutationTree<RootState> = {
     state.todos.push(payload.todo);
     return state.todos;
   },
+  UPDATE_SELECT_DELETE: (state: RootState, payload: { status: boolean }) =>
+    (state.isDelete = payload.status),
+  UPDATE_SELECT_UPDATE: (state: RootState, payload: { status: boolean }) =>
+    (state.isUpdate = payload.status),
+  SELECT_TODO: (state: RootState, payload: { id: string }) =>
+    (state.selectedId = payload.id),
+  UNSELECT_TODO: (state: RootState) => (state.selectedId = ''),
 };
 
 export const actions: ActionTree<RootState, RootState> = {

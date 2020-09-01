@@ -7,6 +7,7 @@
       <todo-list :todos="doneTodos" title="Done" bg-color="bg-green-200" />
       <todo-list :todos="pendingTodos" title="Pending" bg-color="bg-red-200" />
     </div>
+    <delete-modal v-if="isSelected && isDelete"></delete-modal>
   </div>
 </template>
 
@@ -16,17 +17,27 @@ import { mapGetters } from 'vuex';
 import '@nuxtjs/axios';
 import TodoList from '@/components/TodoList.vue';
 import TodoForm from '@/components/TodoForm.vue';
+import DeleteModal from '@/components/DeleteModal.vue';
 
 export default Vue.extend({
   components: {
     TodoList,
     TodoForm,
+    DeleteModal,
   },
   async fetch() {
     await this.$store.dispatch('fetchTodos');
   },
   computed: {
-    ...mapGetters(['newTodos', 'wipTodos', 'doneTodos', 'pendingTodos']),
+    ...mapGetters([
+      'newTodos',
+      'wipTodos',
+      'doneTodos',
+      'pendingTodos',
+      'isDelete',
+      'isUpdate',
+      'isSelected',
+    ]),
   },
 });
 </script>

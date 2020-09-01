@@ -75,9 +75,11 @@ export default Vue.extend({
       }) ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     },
     remove() {
-      this.$store.dispatch('deleteTodo', this.todo.id).catch((err) => {
-        console.error(err);
-      });
+      this.$store.commit('SELECT_TODO', { id: this.todo.id });
+      this.$store.commit('UPDATE_SELECT_DELETE', { status: true });
+      //   this.$store.dispatch('deleteTodo', this.todo.id).catch((err) => {
+      //     console.error(err);
+      //   });
     },
   },
 });
