@@ -2,10 +2,30 @@
   <div class="w-screen h-screen flex flex-col bg-white">
     <todo-form />
     <div class="flex flex-row space-x-8 w-full h-full p-3">
-      <todo-list :todos="newTodos" title="New" bg-color="bg-orange-200" />
-      <todo-list :todos="wipTodos" title="WIP" bg-color="bg-blue-200" />
-      <todo-list :todos="doneTodos" title="Done" bg-color="bg-green-200" />
-      <todo-list :todos="pendingTodos" title="Pending" bg-color="bg-red-200" />
+      <todo-list
+        :todos="newTodos"
+        title="New"
+        bg-color="bg-orange-200"
+        :status="statusNew"
+      />
+      <todo-list
+        :todos="wipTodos"
+        title="WIP"
+        bg-color="bg-blue-200"
+        :status="statusWIP"
+      />
+      <todo-list
+        :todos="doneTodos"
+        title="Done"
+        bg-color="bg-green-200"
+        :status="statusDone"
+      />
+      <todo-list
+        :todos="pendingTodos"
+        title="Pending"
+        bg-color="bg-red-200"
+        :status="statusPending"
+      />
     </div>
     <delete-modal v-if="isSelected && isDelete"></delete-modal>
     <edit-modal v-if="isSelected && isUpdate"></edit-modal>
@@ -16,6 +36,7 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import '@nuxtjs/axios';
+import { TodoStatus } from '@/types/task';
 import TodoList from '@/components/TodoList.vue';
 import TodoForm from '@/components/TodoForm.vue';
 import DeleteModal from '@/components/DeleteModal.vue';
@@ -41,6 +62,18 @@ export default Vue.extend({
       'isUpdate',
       'isSelected',
     ]),
+    statusNew() {
+      return TodoStatus.statusNew;
+    },
+    statusWIP() {
+      return TodoStatus.statusWIP;
+    },
+    statusDone() {
+      return TodoStatus.statusDone;
+    },
+    statusPending() {
+      return TodoStatus.statusPending;
+    },
   },
 });
 </script>

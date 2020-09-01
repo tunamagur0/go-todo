@@ -1,8 +1,10 @@
 <template>
   <div
     class="flex flex-row flex-shrink-0 max-w-sm rounded overflow-hidden shadow-lg text-center bg-gray-100"
+    draggable="true"
+    @dragstart="dragStart"
   >
-    <div class="w-8 my-auto mx-0 cursor-pointer flex-shrink-0">
+    <div class="w-8 my-auto mx-0 cursor-move flex-shrink-0">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -19,6 +21,7 @@
     </div>
     <div
       class="flex flex-col items-center flex-grow cursor-pointer"
+      draggable="false"
       @click="edit"
     >
       <p class="px-2 py-2 text-xl">{{ todo.content }}</p>
@@ -29,7 +32,11 @@
         </p>
       </div> -->
     </div>
-    <div class="w-6 my-auto mx-2 cursor-pointer flex-shrink-0" @click="remove">
+    <div
+      class="w-6 my-auto mx-2 cursor-pointer flex-shrink-0"
+      draggable="false"
+      @click="remove"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -84,6 +91,9 @@ export default Vue.extend({
     edit() {
       this.$store.commit('SELECT_TODO', { id: this.todo.id });
       this.$store.commit('UPDATE_SELECT_UPDATE', { status: true });
+    },
+    dragStart(e: DragEvent) {
+      e.dataTransfer?.setData('id', this.todo.id);
     },
   },
 });

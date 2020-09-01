@@ -1,5 +1,9 @@
 <template>
-  <div class="flex flex-col flex-1 h-full">
+  <div
+    class="flex flex-col flex-1 h-full"
+    @dragover="onDragOver"
+    @drop="onDrop"
+  >
     <div class="text-center">
       <p class="text-xl uppercase">{{ title }}</p>
     </div>
@@ -33,6 +37,26 @@ export default Vue.extend({
     bgColor: {
       type: String,
       required: true,
+    },
+    status: {
+      type: Number,
+      required: true,
+    },
+  },
+  methods: {
+    onDrop(e: DragEvent) {
+      e.preventDefault();
+      const id = e.dataTransfer?.getData('id');
+      if (id) {
+        this.$store
+          .dispatch('updateStatus', { id, status: this.$props.status })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
+    },
+    onDragOver(e: DragEvent) {
+      e.preventDefault();
     },
   },
 });

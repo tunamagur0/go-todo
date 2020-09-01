@@ -8,7 +8,7 @@
       />
       <button
         class="w-1/4 outline-none text-white text-lg bg-blue-500 hover:bg-blue-700 border-gray-400 border-2 rounded-lg shadow-lg"
-        @click="onclick"
+        @click="onClick"
       >
         CREATE
       </button>
@@ -24,7 +24,7 @@ export default Vue.extend({
     return { content: '' };
   },
   methods: {
-    onclick() {
+    onClick() {
       if (this.content.length === 0) return;
       if (this.content.length > 255) {
         alert('content is too long!');
