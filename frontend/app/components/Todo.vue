@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-row flex-shrink-0 max-w-sm rounded overflow-hidden shadow-lg text-center bg-gray-100"
+    class="flex flex-row flex-shrink-0 max-w-sm rounded overflow-hidden shadow-lg text-center bg-gray-100 transition-all duration-300 ease-in-out"
     draggable="true"
     @dragstart="dragStart"
   >
