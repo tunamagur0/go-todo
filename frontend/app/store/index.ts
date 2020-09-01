@@ -22,9 +22,13 @@ export const getters: GetterTree<RootState, RootState> = {
     state.todos.filter((e) => e.status === TodoStatus.statusDone),
   pendingTodos: (state) =>
     state.todos.filter((e) => e.status === TodoStatus.statusPending),
+  selectedTodo: (state) => {
+    const filtered = state.todos.filter((e) => e.id === state.selectedId);
+    return filtered.length === 0 ? null : filtered[0];
+  },
   isSelected: (state) => state.selectedId !== '',
   isDelete: (state) => state.isDelete,
-  isUpdate: (state) => state.isDelete,
+  isUpdate: (state) => state.isUpdate,
   todos: (state) => state.todos,
 };
 
@@ -82,6 +86,26 @@ export const actions: ActionTree<RootState, RootState> = {
       console.log(err.request.response);
       throw err;
     });
+    await this.dispatch('fetchTodos');
+  },
+  async updateContent(_, payload: { id: string; content: string }) {
+    await this.$axios
+      .post(`/api/todo/${payload.id}/content`, { content: payload.content })
+      .catch((err) => {
+        console.log(err.request.response);
+        throw err;
+      });
+
+    await this.dispatch('fetchTodos');
+  },
+  async updateStatus(_, payload: { id: string; status: TodoStatus }) {
+    await this.$axios
+      .post(`/api/todo/${payload.id}/status`, { status: payload.status })
+      .catch((err) => {
+        console.log(err.request.response);
+        throw err;
+      });
+
     await this.dispatch('fetchTodos');
   },
 };

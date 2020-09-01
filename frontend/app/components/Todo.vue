@@ -17,7 +17,10 @@
         />
       </svg>
     </div>
-    <div class="flex flex-col items-center flex-grow">
+    <div
+      class="flex flex-col items-center flex-grow cursor-pointer"
+      @click="edit"
+    >
       <p class="px-2 py-2 text-xl">{{ todo.content }}</p>
       <!-- <div class="flex flex-row text-center">
         <p class="px-2 py-2 text-sm">{{ createdString }}</p>
@@ -77,9 +80,10 @@ export default Vue.extend({
     remove() {
       this.$store.commit('SELECT_TODO', { id: this.todo.id });
       this.$store.commit('UPDATE_SELECT_DELETE', { status: true });
-      //   this.$store.dispatch('deleteTodo', this.todo.id).catch((err) => {
-      //     console.error(err);
-      //   });
+    },
+    edit() {
+      this.$store.commit('SELECT_TODO', { id: this.todo.id });
+      this.$store.commit('UPDATE_SELECT_UPDATE', { status: true });
     },
   },
 });

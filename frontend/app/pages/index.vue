@@ -8,6 +8,7 @@
       <todo-list :todos="pendingTodos" title="Pending" bg-color="bg-red-200" />
     </div>
     <delete-modal v-if="isSelected && isDelete"></delete-modal>
+    <edit-modal v-if="isSelected && isUpdate"></edit-modal>
   </div>
 </template>
 
@@ -18,12 +19,14 @@ import '@nuxtjs/axios';
 import TodoList from '@/components/TodoList.vue';
 import TodoForm from '@/components/TodoForm.vue';
 import DeleteModal from '@/components/DeleteModal.vue';
+import EditModal from '@/components/EditModal.vue';
 
 export default Vue.extend({
   components: {
     TodoList,
     TodoForm,
     DeleteModal,
+    EditModal,
   },
   async fetch() {
     await this.$store.dispatch('fetchTodos');
