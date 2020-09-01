@@ -2,7 +2,7 @@
   <div
     class="flex flex-row flex-shrink-0 max-w-sm rounded overflow-hidden shadow-lg text-center bg-gray-100"
   >
-    <div class="w-8 my-auto mx-0 cursor-pointer">
+    <div class="w-8 my-auto mx-0 cursor-pointer flex-shrink-0">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -26,7 +26,7 @@
         </p>
       </div> -->
     </div>
-    <div class="w-6 my-auto mx-2 cursor-pointer" @click="remove">
+    <div class="w-6 my-auto mx-2 cursor-pointer flex-shrink-0" @click="remove">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
