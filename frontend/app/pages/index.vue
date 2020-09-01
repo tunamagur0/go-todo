@@ -1,50 +1,29 @@
 <template>
-  <div class="w-screen min-h-screen flex bg-blue-200">
+  <div class="w-screen min-h-screen flex bg-white">
     <div class="flex flex-row space-x-8 w-full m-3">
-      <todo-list :todos="newTodo" title="New" bg-color="bg-orange-200" />
-      <todo-list :todos="doneTodo" title="Done" bg-color="bg-green-200" />
-      <todo-list :todos="pendingTodo" title="Pending" bg-color="bg-red-200" />
+      <todo-list :todos="newTodos" title="New" bg-color="bg-orange-200" />
+      <todo-list :todos="wipTodos" title="WIP" bg-color="bg-blue-200" />
+      <todo-list :todos="doneTodos" title="Done" bg-color="bg-green-200" />
+      <todo-list :todos="pendingTodos" title="Pending" bg-color="bg-red-200" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import '@nuxtjs/axios';
 import TodoList from '@/components/TodoList.vue';
-import { camelize } from '@/libs/camelize';
-import { convertDate } from '@/libs/convertDate';
-import * as Task from '@/types/task';
 
 export default Vue.extend({
   components: {
     TodoList,
   },
-  async asyncData({ $axios }) {
-    const res = await $axios
-      .$get('/api/todos')
-      .then((r: Task.Todo[]) => {
-        return r.map((e: Task.Todo) => convertDate(camelize(e)));
-      })
-      .catch((err) => {
-        console.log(err.request.response);
-        return [];
-      });
-
-    return { todos: res };
+  async fetch() {
+    await this.$store.dispatch('fetchTodos');
   },
   computed: {
-    newTodo() {
-      return this.todos.filter((e) => e.status === Task.TodoStatus.statusNew);
-    },
-    doneTodo() {
-      return this.todos.filter((e) => e.status === Task.TodoStatus.statusDone);
-    },
-    pendingTodo() {
-      return this.todos.filter(
-        (e) => e.status === Task.TodoStatus.statusPending
-      );
-    },
+    ...mapGetters(['newTodos', 'wipTodos', 'doneTodos', 'pendingTodos']),
   },
 });
 </script>

@@ -47,6 +47,7 @@ export default {
     '@nuxt/typescript-build',
     // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss',
+    'nuxt-typed-vuex',
   ],
   /*
    ** Nuxt.js modules
