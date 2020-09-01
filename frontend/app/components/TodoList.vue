@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col w-1/3">
+  <div class="flex flex-col flex-1 h-full">
     <div class="text-center">
       <p class="text-xl uppercase">{{ title }}</p>
     </div>
     <div
-      class="flex flex-col w-full flex-grow space-y-8 border-gray-800 rounded-md border-2 p-2"
+      class="flex flex-col w-full h-full flex-grow space-y-8 border-gray-800 rounded-md border-2 p-2 overflow-y-scroll"
       :class="bgColor"
     >
       <todo v-for="todo in todos" :key="todo.id" :todo="todo" />

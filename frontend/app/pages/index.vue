@@ -1,6 +1,6 @@
 <template>
-  <div class="w-screen min-h-screen flex bg-white">
-    <div class="flex flex-row space-x-8 w-full m-3">
+  <div class="w-screen h-screen flex bg-white">
+    <div class="flex flex-row space-x-8 w-full h-full p-3">
       <todo-list :todos="newTodos" title="New" bg-color="bg-orange-200" />
       <todo-list :todos="wipTodos" title="WIP" bg-color="bg-blue-200" />
       <todo-list :todos="doneTodos" title="Done" bg-color="bg-green-200" />
