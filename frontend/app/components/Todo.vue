@@ -18,7 +18,7 @@
       </svg>
     </div>
     <div class="flex flex-col items-center flex-grow">
-      <div class="px-2 py-2 text-xl">{{ todo.content }}</div>
+      <p class="px-2 py-2 text-xl">{{ todo.content }}</p>
       <!-- <div class="flex flex-row text-center">
         <p class="px-2 py-2 text-sm">{{ createdString }}</p>
         <p v-if="done" class="px-2 py-2 text-sm">

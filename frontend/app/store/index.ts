@@ -35,6 +35,10 @@ export const mutations: MutationTree<RootState> = {
   },
   DELETE_TODO: (state: RootState, payload: { id: string }) =>
     (state.todos = state.todos.filter((e: Todo) => e.id !== payload.id)),
+  ADD_TODO: (state: RootState, payload: { todo: Todo }) => {
+    state.todos.push(payload.todo);
+    return state.todos;
+  },
 };
 
 export const actions: ActionTree<RootState, RootState> = {
@@ -59,5 +63,12 @@ export const actions: ActionTree<RootState, RootState> = {
       throw err;
     });
     this.app.$accessor.DELETE_TODO({ id });
+  },
+  async addTodo(_, payload: { content: string }) {
+    await this.$axios.post('/api/create', payload).catch((err) => {
+      console.log(err.request.response);
+      throw err;
+    });
+    await this.dispatch('fetchTodos');
   },
 };

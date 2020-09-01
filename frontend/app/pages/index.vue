@@ -1,5 +1,6 @@
 <template>
-  <div class="w-screen h-screen flex bg-white">
+  <div class="w-screen h-screen flex flex-col bg-white">
+    <todo-form />
     <div class="flex flex-row space-x-8 w-full h-full p-3">
       <todo-list :todos="newTodos" title="New" bg-color="bg-orange-200" />
       <todo-list :todos="wipTodos" title="WIP" bg-color="bg-blue-200" />
@@ -14,10 +15,12 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import '@nuxtjs/axios';
 import TodoList from '@/components/TodoList.vue';
+import TodoForm from '@/components/TodoForm.vue';
 
 export default Vue.extend({
   components: {
     TodoList,
+    TodoForm,
   },
   async fetch() {
     await this.$store.dispatch('fetchTodos');
